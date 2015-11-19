@@ -2,7 +2,7 @@ function Ensure(meteor, st)  {
   this.meteor = meteor;
   this.st = st;
   this.middleware = [];
-  this.message = "Permission denied."
+  this.message = "Permission denied"
 }
 
 // Set the default error message (i.e. "Permission denied", "Invalid parameter, ...")
@@ -14,12 +14,7 @@ Ensure.prototype.use = function(fn) {
   this.middleware.push(fn);
 };
 
-Ensure.prototype.getMethodName = function() {
-  var parsed = st.parse(new Error());
-  return parsed.length > 1 ? parsed[1].methodName : "<unknown>";
-};
-
-Ensure.prototype.ensure = function(condition, message) {
+Ensure.prototype.ensure = function(condition, message, code) {
   var args = arguments;
   var methodName, parsed;
   
@@ -34,7 +29,7 @@ Ensure.prototype.ensure = function(condition, message) {
       f.apply(this, [ message, err ]);
     }.bind(this));
 
-    throw new Meteor.Error(422, message);
+    throw new Meteor.Error(code || 422, message);
   }
 };
 
