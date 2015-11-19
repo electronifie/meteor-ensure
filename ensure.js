@@ -1,6 +1,5 @@
-function Ensure(meteor, st)  {
+function Ensure(meteor)  {
   this.meteor = meteor;
-  this.st = st;
   this.middleware = [];
   this.message = "Permission denied"
 }
@@ -17,10 +16,7 @@ Ensure.prototype.use = function(fn) {
 Ensure.prototype.ensure = function(condition, prefix, message, code) {
   var args = arguments;
   var methodName, parsed;
-  
-  //var err = this.stackTrace(new Error());
   var err = new Error();
-  err = err.stack;
 
   if (prefix && message) {
     message = prefix + ": " + message;
@@ -32,7 +28,7 @@ Ensure.prototype.ensure = function(condition, prefix, message, code) {
 
   if (!condition) {
     this.middleware.forEach(function (f) {
-      f.apply(this, [ message, err ]);
+      f.apply(this, [ message, err.stack ]);
     }.bind(this));
 
     throw new Meteor.Error(code || 422, message);
@@ -48,9 +44,7 @@ Ensure.prototype.param = function(condition, message, code) {
 };
 
 if (Meteor.isServer) {
-  var st = Npm.require('stack-trace');
-
-  this.Ensure = new Ensure(this, st);
+  this.Ensure = new Ensure(this);
 }
 
 
