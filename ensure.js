@@ -14,7 +14,7 @@ Ensure.prototype.use = function(fn) {
   this.middleware.push(fn);
 };
 
-Ensure.prototype.ensure = function(condition, message, code) {
+Ensure.prototype.ensure = function(condition, prefix, message, code) {
   var args = arguments;
   var methodName, parsed;
   
@@ -22,7 +22,13 @@ Ensure.prototype.ensure = function(condition, message, code) {
   var err = new Error();
   err = err.stack;
 
-  message = message || this.message;
+  if (prefix && message) {
+    message = prefix + ": " + message;
+  } else if (prefix) {
+    message = prefix;
+  } else if (!message) {
+    message = this.message;
+  }
 
   if (!condition) {
     this.middleware.forEach(function (f) {
@@ -31,6 +37,14 @@ Ensure.prototype.ensure = function(condition, message, code) {
 
     throw new Meteor.Error(code || 422, message);
   }
+};
+
+Ensure.prototype.authenticated = function(message, code) {
+  this.ensure(Meteor.userId(), "Permission denied", message, code || 401);
+};
+
+Ensure.prototype.param = function(condition, message, code) {
+  this.ensure(condition, "Invalid parameter", message, code || 422);
 };
 
 if (Meteor.isServer) {
