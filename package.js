@@ -1,12 +1,8 @@
 Package.describe({
   name: 'electronifiejs:meteor-ensure',
   summary: "ensure",
-  version: "0.0.1",
+  version: "0.0.2",
   git: "https://github.com/electronifie/meteor-ensure.git"
-});
-
-Npm.depends({
-  "stack-trace": "0.0.9"
 });
 
 Package.onUse(function(api) {
